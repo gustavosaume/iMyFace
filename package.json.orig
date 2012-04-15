@@ -1,0 +1,18 @@
+{
+  "author": "Gustavo Saume <gustavosaume@gmail.com>",
+  "name": "iMyFace",
+  "description": "CS Challenge proposed by Bloomberg",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gustavosaume/engineauth-boilerplate.git"
+  },
+  "dependencies": {
+    "less": "~1.3.0"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
