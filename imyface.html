@@ -43,9 +43,9 @@
       <a class="brand" href="/">iMyFace</a>
       <div class="nav-collapse">
         <ul class="nav">
-          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/">Home</a></li>
           <li><a href="/tests.html">Tests</a></li>
-          <li><a href="/imyface.html">iMyFace</a></li>
+          <li class="active"><a href="/imyface.html">iMyFace</a></li>
         </ul>
       </div><!--/.nav-collapse -->
     </div>
@@ -55,16 +55,34 @@
 
 
 <div class="container">
-    <div class="hero-unit">
-        <h1>Welcome to <em>iMyFace</em></h1>
-        
-        <hr>    
-        
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-        <p><a class="btn btn-primary btn-large pull-right" href="https://github.com/generalassembly/cs-for-hackers/blob/master/week-03/hacking-challenge.pdf">Learn more &raquo;</a></p>
+    <canvas>
+    </canvas><!-- End of canvas -->
+    <div class="row">
+        <section class="span4">
+            <h2>Load Faces</h2>
+            <form class="form-vertical" id="faces">        
+                <textarea id="faces_data" placeholder="Paste Faces Data" class="boxsizingBorder" rows="5"></textarea>
+                <button type="button"class="btn btn-primary btn-large pull-right" onclick="loadFaces()">Load Faces</button>
+            </form>
+        </section>
+        <section class="span4" id="connections">
+            <h2>Load Connections</h2>
+            <form class="form-vertical">        
+                <textarea id="connections_data" placeholder="Paste Connections Data" class="boxsizingBorder" rows="5"></textarea>
+                <button type="button"class="btn btn-primary btn-large pull-right disabled" onclick="loadConnections()">Load Connections</button>
+            </form>
+        </section>
+        <section class="span4" id="posts">
+            <h2>Load Posts</h2>
+            <form class="form-vertical">        
+                <textarea id="posts_data" placeholder="Paste Posts Data" class="boxsizingBorder" rows="5"></textarea>
+                <button type="button"class="btn btn-primary btn-large pull-right disabled" onclick="loadPosts()">Load Posts</button>
+            </form>
+        </section>
+
+
     </div>
-
-
+    
     <hr>
     
     <footer>
