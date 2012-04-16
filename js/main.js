@@ -12,6 +12,17 @@ $(document).ready(function(){
 var raw_data = '';
 var repetitions = 10000;
 var value = ['TLi2', 'DSarig1', 'SSadanandam1'];
+
+function getSampleData()
+{
+    $.ajax({url:'data/faces_long.txt',
+            success:function(data)
+                {
+                    $('#raw_data').val(data);
+                },
+           })
+}
+
 function loadLookupData()
 {
     raw_data = $('#raw_data').val();
@@ -149,5 +160,88 @@ var BinaryTree = function(){
     }
     // declare public function
     return {insert: insert, searchIndex: searchIndex}
+}
 
+//--------------------------------------
+//
+//  iMyFace
+//
+//--------------------------------------
+
+// DataStructure
+var FacesData = function()
+{
+    var faces = {};
+    
+    var Face = function()
+    {
+        var face = {name: null,
+                    lastName: null,
+                    password: null,
+                    id: null,
+                    index: null,
+                    posts: null,
+                    timeline: null};
+        return face;
+    }
+    
+    var loadFaces = function (facesData)
+    {
+        var facesList = facesData.split('\n');
+        
+        var length = facesList.length, i;
+        for (i=0; i<length; i++)
+        {
+            var faceData = (facesList[i]).split('|');
+            loadFace(faceData[0], faceData[1], faceData[2], faceData[3], i);
+        }
+    }
+    
+    var loadFace = function(name, lastName, id, password, index)
+    {
+        face = new Face();
+        face.name = name;
+        face.lastName = lastName;
+        face.id = id;
+        face.password = password;
+        face.index = index;
+        
+        faces [id] = face;
+    }
+    
+    var loadConnections = function ()
+    {
+    
+    }
+    
+    var loadPosts = function ()
+    {
+    
+    }
+    
+    var getFace = function(id)
+    {
+        return faces[id];
+    }
+    
+    return {loadFaces: loadFaces,
+            loadConnections: loadConnections,
+            loadPosts: loadPosts,
+            getFace: getFace};
+}
+
+var faces;
+
+// page Methods
+function loadFaces()
+{
+    faces = new FacesData();
+    faces.loadFaces($('#faces textarea').val());
+    $('#connections button.disabled').removeClass('disabled');
+}
+
+function loadConnections()
+{
+    faces.loadConnections($('#connections textarea').val());
+    $('#posts button.desabled').removeClass('disabled');
 }

@@ -45,6 +45,7 @@
         <ul class="nav">
           <li><a href="/">Home</a></li>
           <li class="active"><a href="/tests.html">Tests</a></li>
+          <li><a href="/imyface.html">iMyFace</a></li>
         </ul>
       </div><!--/.nav-collapse -->
     </div>
@@ -65,7 +66,7 @@
 
     <section id="setup" class="well">
         <h1>Look up tests</h1>
-        <p>Measures the time of a name lookup</p>
+        <p>Measures the time of a name lookup <a onclick="getSampleData()">get sample data</a></p>
         <form class="form-vertical">        
             <textarea id="raw_data" placeholder="Load data" class="boxsizingBorder" rows="10"></textarea>
             <button type="button"class="btn btn-primary btn-large pull-right" onclick="loadLookupData()">Load test data</button>
