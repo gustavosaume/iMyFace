@@ -181,7 +181,8 @@ var FacesData = function()
                     id: null,
                     index: null,
                     posts: null,
-                    timeline: null};
+                    timeline: null,
+                    fwds:[]};
         return face;
     }
     
@@ -189,10 +190,10 @@ var FacesData = function()
     {
         var facesList = facesData.split('\n');
         
-        var length = facesList.length, i;
+        var length = facesList.length, i, faceData;
         for (i=0; i<length; i++)
         {
-            var faceData = (facesList[i]).split('|');
+            faceData = (facesList[i]).split('|');
             loadFace(faceData[0], faceData[1], faceData[2], faceData[3], i);
         }
     }
@@ -209,9 +210,37 @@ var FacesData = function()
         faces [id] = face;
     }
     
-    var loadConnections = function ()
+    var loadConnections = function (connectionsData)
     {
+        var connections = connectionsData.split('\n');
+        var length = connections.length, i, connection;
+        
+        for (i=0; i < length; i++)
+        {
+            connection = connections[i].split(" ");
+            
+            if (connection[1] == "OuttaMyFace")
+            {
+                createConnection(connection[0], connection[2]);
+            }else
+            {
+                createConnection(connection[2], connection[0]);
+            }
+        }
+    }
     
+    var createConnection(from, to)
+    {
+        from_face = getFace(from)
+        to_face = getFace(to)
+        
+        if (!from_face || to_face)
+        {
+            // log error
+            return
+        }
+        
+        from_face.fwds.push(to);
     }
     
     var loadPosts = function ()
