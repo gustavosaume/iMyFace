@@ -1,14 +1,58 @@
 /* Author:
-
+Gustavo Saume
 */
 
-$(document).ready(function(){
+IMYFACE = {
+    common: {
+        init: function()
+        {
+        
+        }
+    },
+    tests: {
+        init: function()
+        {
+            $('.nav').scrollspy({offset:10});
+        }
+    },
+    main: {
+        init: function()
+        {
+               
+        }
+    }
+}
 
-    $('.nav').scrollspy({offset:10});
 
-});
+UTIL = {
+  exec: function( controller, action ) {
+    var ns = SITENAME,
+        action = ( action === undefined ) ? "init" : action;
+ 
+    if ( controller !== "" && ns[controller] && typeof ns[controller][action] == "function" ) {
+      ns[controller][action]();
+    }
+  },
+ 
+  init: function() {
+    var body = document.body,
+        controller = body.getAttribute( "data-controller" ),
+        action = body.getAttribute( "data-action" );
+ 
+    UTIL.exec( "common" );
+    UTIL.exec( controller );
+    UTIL.exec( controller, action );
+  }
+};
+ 
+$( document ).ready( UTIL.init );
 
 
+//----------------------------------------------------------
+//
+//  TESTS
+//
+//----------------------------------------------------------
 var raw_data = '';
 var repetitions = 10000;
 var value = ['TLi2', 'DSarig1', 'SSadanandam1'];
@@ -162,13 +206,15 @@ var BinaryTree = function(){
     return {insert: insert, searchIndex: searchIndex}
 }
 
-//--------------------------------------
+//----------------------------------------------------------
 //
 //  iMyFace
 //
-//--------------------------------------
+//----------------------------------------------------------
+
 
 // DataStructure
+//--------------------------------------
 var FacesData = function()
 {
     var faces = {};
@@ -182,7 +228,7 @@ var FacesData = function()
                     index: null,
                     posts: null,
                     timeline: null,
-                    fwds:[]};
+                    readers:[]};
         return face;
     }
     
@@ -229,7 +275,7 @@ var FacesData = function()
         }
     }
     
-    var createConnection(from, to)
+    var createConnection = function(from, to)
     {
         from_face = getFace(from)
         to_face = getFace(to)
@@ -248,20 +294,63 @@ var FacesData = function()
     
     }
     
+    
     var getFace = function(id)
     {
         return faces[id];
     }
     
+    var getPaths = function(nodeId, goalId, getAll, path, results)
+    {
+        // Append the current node to the traversed path
+        currentPath = path;
+        currentPath.append(nodeId);
+        
+        // if we are at the goal, we add the path to the results
+        if (nodeId == goalId)
+        {
+            results.append(currentPath);
+            return;
+        }
+        
+        currentNode = getFace(nodeId)
+        var childCount = currentNode.readers;
+        var child;
+        // Go through all the children of the node
+        // and recursively call getPath with each child
+        // until the goal is found 
+        for (var i=0; i < childCount; i++)
+        {
+            // continue only if the current child hasn't
+            // been evaluated in the current path
+            childId = currentNode.readers[i];
+            if (currentPath.indexOf(childId) == -1)
+            {
+                // navigate through each child
+                getPaths(childId, goaded, getAll, path, results);
+                
+                // if we only need to get one result (to see if they're connected)
+                // and already found one path we return
+                // if not we continue until all path are covered
+                if (!getAll && results.length > 0)
+                {
+                    return;
+                }
+            }
+        }
+    }
+    
     return {loadFaces: loadFaces,
             loadConnections: loadConnections,
             loadPosts: loadPosts,
-            getFace: getFace};
+            getFace: getFace,
+            getPaths: getPaths};
 }
 
 var faces;
 
 // page Methods
+//--------------------------------------
 function loadFaces()
 {
     faces = new FacesData();
@@ -273,4 +362,41 @@ function loadConnections()
 {
     faces.loadConnections($('#connections textarea').val());
     $('#posts button.desabled').removeClass('disabled');
+}
+
+function isAFace(id)
+{
+    return faces.getFace(id) ? true : false;
+}
+
+function isInMyFace(myId, faceId)
+{
+    results = new Array();
+    faces.getPaths(faceId, myId, false, [], results);
+    
+    return results.length > 0 ? true : false; 
+}
+
+function getInMyFacePaths(myId, faceId)
+{
+    results = new Array();
+    faces.getPaths(faceId, myId, true, [], results);
+    
+    return results; 
+}
+
+function isOutOfMyFace(myId, faceId)
+{
+    results = new Array();
+    faces.getPaths(myId, faceId, false, [], results);
+    
+    return results.length > 0 ? true : false; 
+}
+
+function getOutOfMyFacePaths(myId, faceId)
+{
+    results = new Array();
+    faces.getPaths(myId, faceId, true, [], results);
+    
+    return results.length > 0 ? true : false;
 }
