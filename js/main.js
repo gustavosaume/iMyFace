@@ -18,7 +18,45 @@ IMYFACE = {
     main: {
         init: function()
         {
-               
+            // add the listeners to the data preset loaders
+            $('#smallData').bind('click', function(){
+                // remove all active
+                $(this).parents('.nav').children('.active').removeClass('active');                
+                $(this).parent().addClass('active');
+            });
+            
+            $('#mediumData').bind('click', function(){
+                // remove all active
+                $(this).parents('.nav').children('.active').removeClass('active');                
+                $(this).parent().addClass('active');
+                
+            });
+            
+            $('#largeData').bind('click', function(){
+                // remove all active
+                $(this).parents('.nav').children('.active').removeClass('active');                
+                $(this).parent().addClass('active');
+            });
+            
+            $('#largeCycleData').bind('click', function(){
+                // remove all active
+                $(this).parents('.nav').children('.active').removeClass('active');                
+                $(this).parent().addClass('active');
+            });
+            
+            $('#customData').bind('click', function(){
+                // remove all active
+                $(this).parents('.nav').children('.active').removeClass('active');                
+                $(this).parent().addClass('active');
+                
+                $('#customFields').removeClass('hidden');
+            });
+            
+            $('#hideButton').bind('click', function()
+            {
+                $('#customFields').addClass('hidden');
+                
+            });
         }
     }
 }
@@ -26,7 +64,7 @@ IMYFACE = {
 
 UTIL = {
   exec: function( controller, action ) {
-    var ns = SITENAME,
+    var ns = IMYFACE,
         action = ( action === undefined ) ? "init" : action;
  
     if ( controller !== "" && ns[controller] && typeof ns[controller][action] == "function" ) {
@@ -211,7 +249,7 @@ var BinaryTree = function(){
 //  iMyFace
 //
 //----------------------------------------------------------
-
+var faces;
 
 // DataStructure
 //--------------------------------------
@@ -280,13 +318,13 @@ var FacesData = function()
         from_face = getFace(from)
         to_face = getFace(to)
         
-        if (!from_face || to_face)
+        if (!from_face || !to_face)
         {
             // log error
             return
         }
         
-        from_face.fwds.push(to);
+        from_face.readers.push(to);
     }
     
     var loadPosts = function ()
@@ -303,19 +341,19 @@ var FacesData = function()
     var getPaths = function(nodeId, goalId, getAll, path, results)
     {
         // Append the current node to the traversed path
-        currentPath = path;
-        currentPath.append(nodeId);
+        var currentPath = path.slice();
+        currentPath.push(nodeId);
         
         // if we are at the goal, we add the path to the results
         if (nodeId == goalId)
         {
-            results.append(currentPath);
+            results.push(currentPath);
             return;
         }
         
-        currentNode = getFace(nodeId)
-        var childCount = currentNode.readers;
-        var child;
+        var currentNode = getFace(nodeId)
+        var childCount = currentNode.readers.length;
+        var child, childId;
         // Go through all the children of the node
         // and recursively call getPath with each child
         // until the goal is found 
@@ -327,7 +365,7 @@ var FacesData = function()
             if (currentPath.indexOf(childId) == -1)
             {
                 // navigate through each child
-                getPaths(childId, goaded, getAll, path, results);
+                getPaths(childId, goalId, getAll, currentPath, results);
                 
                 // if we only need to get one result (to see if they're connected)
                 // and already found one path we return
@@ -346,8 +384,6 @@ var FacesData = function()
             getFace: getFace,
             getPaths: getPaths};
 }
-
-var faces;
 
 // page Methods
 //--------------------------------------
@@ -371,7 +407,7 @@ function isAFace(id)
 
 function isInMyFace(myId, faceId)
 {
-    results = new Array();
+    var results = new Array();
     faces.getPaths(faceId, myId, false, [], results);
     
     return results.length > 0 ? true : false; 
@@ -379,7 +415,7 @@ function isInMyFace(myId, faceId)
 
 function getInMyFacePaths(myId, faceId)
 {
-    results = new Array();
+    var results = new Array();
     faces.getPaths(faceId, myId, true, [], results);
     
     return results; 
@@ -387,7 +423,7 @@ function getInMyFacePaths(myId, faceId)
 
 function isOutOfMyFace(myId, faceId)
 {
-    results = new Array();
+    var results = new Array();
     faces.getPaths(myId, faceId, false, [], results);
     
     return results.length > 0 ? true : false; 
@@ -395,8 +431,34 @@ function isOutOfMyFace(myId, faceId)
 
 function getOutOfMyFacePaths(myId, faceId)
 {
-    results = new Array();
+    var results = new Array();
     faces.getPaths(myId, faceId, true, [], results);
     
-    return results.length > 0 ? true : false;
+    return results;
+}
+
+function getShortestPath(myId, faceId)
+{
+    var results = new Array();
+    faces.getPaths(myId, faceId, true, [], results);
+    
+    var length = results.length;
+    var shortestPathLength = Number.MAX_VALUE,
+        shortestPath = [],
+        currentResult;
+    for (var i=0; i < length; i++)
+    {
+        currentResult = results[i];
+        if (currentResult.length < shortestPathLength)
+        {
+            shortestPathLength = currentResult.length;
+            shortestPath = currentResult;
+        }
+    }
+    return shortestPath;
+}
+
+function getShortestPathCount(myId, faceId)
+{
+    return getShortestPath(myId, faceId).length;
 }

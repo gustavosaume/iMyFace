@@ -21,7 +21,6 @@
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
 
   <link rel="stylesheet" href="css/bootstrap.css">
-  <link rel="stylesheet" href="css/app.css">
   <link rel="stylesheet" href="css/responsive.css">
   
   <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
@@ -31,7 +30,7 @@
        Create your own custom Modernizr build: www.modernizr.com/download/ -->
   <script src="js/vendor/modernizr-2.5.3.min.js"></script>
 </head>
-<body>
+<body data-controller="main">
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
@@ -55,32 +54,47 @@
 
 
 <div class="container">
-    <canvas>
-    </canvas><!-- End of canvas -->
     <div class="row">
-        <section class="span4">
-            <h2>Load Faces</h2>
-            <form class="form-vertical" id="faces">        
-                <textarea id="faces_data" placeholder="Paste Faces Data" class="boxsizingBorder" rows="5"></textarea>
-                <button type="button"class="btn btn-primary btn-large pull-right" onclick="loadFaces()">Load Faces</button>
-            </form>
-        </section>
-        <section class="span4" id="connections">
-            <h2>Load Connections</h2>
-            <form class="form-vertical">        
-                <textarea id="connections_data" placeholder="Paste Connections Data" class="boxsizingBorder" rows="5"></textarea>
-                <button type="button"class="btn btn-primary btn-large pull-right disabled" onclick="loadConnections()">Load Connections</button>
-            </form>
-        </section>
-        <section class="span4" id="posts">
-            <h2>Load Posts</h2>
-            <form class="form-vertical">        
-                <textarea id="posts_data" placeholder="Paste Posts Data" class="boxsizingBorder" rows="5"></textarea>
-                <button type="button"class="btn btn-primary btn-large pull-right disabled" onclick="loadPosts()">Load Posts</button>
-            </form>
-        </section>
-
-
+        <section class="span12">
+            <h2 class="subtitle">Sample Data</h2>
+            <ul class="nav nav-horizontal">
+                <li><a id="smallData" class="pointable">Small</a></li>
+                <li><a id="mediumData" class="pointable">Medium</a></li>
+                <li><a id="largeData" class="pointable">Large</a></li>
+                <li><a id="largeCycleData" class="pointable">Large w/Cycles</a></li>
+                <li><a id="customData" class="pointable">Custom</a></li>
+            </ul>
+            <div id="customFields" class="row hidden">
+                <a id="hideButton" class="pointable">hide custom</a>
+                <section class="span4">
+                    <div class="well">
+                        <h2>Load Faces</h2>
+                        <form class="form-vertical" id="faces">        
+                            <textarea id="faces_data" placeholder="Paste Faces Data" class="boxsizingBorder" rows="5"></textarea>
+                            <button type="button"class="btn btn-primary btn-large pull-right" onclick="loadFaces()">Load Faces</button>
+                        </form>
+                    </div>
+                </section>
+                <section class="span4" id="connections">
+                    <div class="well">
+                        <h2>Load Connections</h2>
+                        <form class="form-vertical">        
+                            <textarea id="connections_data" placeholder="Paste Connections Data" class="boxsizingBorder" rows="5"></textarea>
+                            <button type="button"class="btn btn-primary btn-large pull-right disabled" onclick="loadConnections()">Load Connections</button>
+                        </form>
+                    </div>
+                </section>
+                <section class="span4" id="posts">
+                    <div class="well">
+                        <h2>Load Posts</h2>
+                        <form class="form-vertical">        
+                            <textarea id="posts_data" placeholder="Paste Posts Data" class="boxsizingBorder" rows="5"></textarea>
+                            <button type="button"class="btn btn-primary btn-large pull-right disabled" onclick="loadPosts()">Load Posts</button>
+                        </form>
+                    </div>
+                </section>
+            </div><!-- End of custom fields -->            
+        </section><!-- End of preset section -->
     </div>
     
     <hr>
