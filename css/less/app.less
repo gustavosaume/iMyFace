@@ -67,15 +67,25 @@ form {
     display: inline;
 }
 
-.nav-horizontal li.active a
+.nav-horizontal
 {
-    border-bottom: 1px dotted blue;
-}
-
-.nav-horizontal li a
-{
-    display: inline-block;
-    margin-left: 10px;
+    li
+    {
+        a
+        {
+            display: inline-block;
+            margin-left: 10px;
+        }
+        
+        &.active
+        {
+            a
+            {
+                border-bottom: 1px dotted darken(@linkColor, 30%);
+                color: darken(@linkColor, 30%);
+            }
+        }
+    }
 }
 
 .subtitle
