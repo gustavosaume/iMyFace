@@ -4063,6 +4063,17 @@ form {
 .pointable {
   cursor: pointer;
 }
+#result-validate {
+  width: 100%;
+}
+.operations {
+  position: relative;
+}
+.operations button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
 /* =============================================================================
    Bootstrap styles cont.
    ========================================================================== */

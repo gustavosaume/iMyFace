@@ -20,35 +20,27 @@ IMYFACE = {
         {
             // add the listeners to the data preset loaders
             $('#smallData').bind('click', function(){
-                // remove all active
-                $(this).parents('.nav').children('.active').removeClass('active');                
-                $(this).parent().addClass('active');
+                loadData('data/small_faces.dat', 'data/small_connections.dat');
+                updateLoadMenu('#smallData');
             });
             
             $('#mediumData').bind('click', function(){
-                // remove all active
-                $(this).parents('.nav').children('.active').removeClass('active');                
-                $(this).parent().addClass('active');
-                
+                loadData('data/medium_faces.dat', 'data/medium_connections.dat');
+                updateLoadMenu('#mediumData');
             });
             
             $('#largeData').bind('click', function(){
-                // remove all active
-                $(this).parents('.nav').children('.active').removeClass('active');                
-                $(this).parent().addClass('active');
+                loadData('data/large_faces.dat', 'data/large_connections.dat');
+                updateLoadMenu('#largeData');
             });
             
             $('#largeCycleData').bind('click', function(){
-                // remove all active
-                $(this).parents('.nav').children('.active').removeClass('active');                
-                $(this).parent().addClass('active');
+                loadData('data/large_cycle_faces.dat', 'data/large_cycle_connections.dat');
+                updateLoadMenu('#largeCycleData');
             });
             
             $('#customData').bind('click', function(){
-                // remove all active
-                $(this).parents('.nav').children('.active').removeClass('active');                
-                $(this).parent().addClass('active');
-                
+                updateLoadMenu('#customData');
                 $('#customFields').removeClass('hidden');
             });
             
@@ -56,6 +48,26 @@ IMYFACE = {
             {
                 $('#customFields').addClass('hidden');
                 
+            });
+            
+            $('#loadFacesButton').bind('click', function(){
+                loadFaces($('#faces_data').val());
+            });
+            
+            $('#loadConnectionsButton').bind('click', function(){
+                loadConnections($('#connections_data').val());
+            });
+            
+            // operations events
+            $('#validate-btn').bind('click', function(){
+                if (!faces)
+                {
+                    $('#validate-result').html('No data loaded');
+                    return
+                }
+                var start = new Date().getTime();
+                $('#validate-result').html(faces.getFace($('#validate-user').val()) ? 'User Exists!' : 'Not registered');
+                $('#validate-time').html(new Date().getTime() - start + " miliseconds");
             });
         }
     }
@@ -102,7 +114,7 @@ function getSampleData()
                 {
                     $('#raw_data').val(data);
                 },
-           })
+           });
 }
 
 function loadLookupData()
@@ -387,16 +399,16 @@ var FacesData = function()
 
 // page Methods
 //--------------------------------------
-function loadFaces()
+function loadFaces(data)
 {
     faces = new FacesData();
-    faces.loadFaces($('#faces textarea').val());
+    faces.loadFaces(data);
     $('#connections button.disabled').removeClass('disabled');
 }
 
-function loadConnections()
+function loadConnections(connections)
 {
-    faces.loadConnections($('#connections textarea').val());
+    faces.loadConnections(connections);
     $('#posts button.desabled').removeClass('disabled');
 }
 
@@ -461,4 +473,27 @@ function getShortestPath(myId, faceId)
 function getShortestPathCount(myId, faceId)
 {
     return getShortestPath(myId, faceId).length;
+}
+
+function loadData(facesFile, connectionsFile)
+{
+    // fetch faces file
+    $.ajax({url:facesFile,
+        success:function(data)
+        {
+            loadFaces(data);
+            // fetch connections
+            $.ajax({url:connectionsFile,
+                    success:function(data){
+                        loadConnections(data);
+                    }
+            }); 
+        },
+    });
+}
+
+function updateLoadMenu(activeItem)
+{
+    $(activeItem).parents('.nav').children('.active').removeClass('active');
+    $(activeItem).parent().addClass('active');
 }

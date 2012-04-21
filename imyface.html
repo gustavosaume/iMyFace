@@ -69,36 +69,47 @@
                 <section class="span4">
                     <div class="well">
                         <h2>Load Faces</h2>
-                        <form class="form-vertical" id="faces">        
+                        <form class="form-vertical" id="faces-form">        
                             <textarea id="faces_data" placeholder="Paste Faces Data" class="boxsizingBorder" rows="5"></textarea>
-                            <button type="button"class="btn btn-primary btn-large pull-right" onclick="loadFaces()">Load Faces</button>
+                            <button id="loadFacesButton" type="button"class="btn btn-primary btn-large pull-right">Load Faces</button>
                         </form>
                     </div>
                 </section>
-                <section class="span4" id="connections">
+                <section class="span4" id="connections-form">
                     <div class="well">
                         <h2>Load Connections</h2>
                         <form class="form-vertical">        
                             <textarea id="connections_data" placeholder="Paste Connections Data" class="boxsizingBorder" rows="5"></textarea>
-                            <button type="button"class="btn btn-primary btn-large pull-right disabled" onclick="loadConnections()">Load Connections</button>
+                            <button id="loadConnectionsButton" type="button"class="btn btn-primary btn-large pull-right disabled" >Load Connections</button>
                         </form>
                     </div>
                 </section>
-                <section class="span4" id="posts">
+                <section class="span4" id="posts-form">
                     <div class="well">
                         <h2>Load Posts</h2>
                         <form class="form-vertical">        
                             <textarea id="posts_data" placeholder="Paste Posts Data" class="boxsizingBorder" rows="5"></textarea>
-                            <button type="button"class="btn btn-primary btn-large pull-right disabled" onclick="loadPosts()">Load Posts</button>
+                            <button id="loadPostsButton" type="button"class="btn btn-primary btn-large pull-right disabled">Load Posts</button>
                         </form>
                     </div>
                 </section>
             </div><!-- End of custom fields -->            
         </section><!-- End of preset section -->
     </div>
+    <hr>
+    <div class="row">
+        <h2 class="span12">Operations</h2>
+        <section class="span3 operations">
+            <h3>Validate User</h3>
+            <input id="validate-user" class="span3" placeholder="User ID">
+            <strong>Result: </strong><span id="validate-result"></span>
+            </br>
+            <strong>Time: </strong><span id="validate-time"></span>
+            <button id="validate-btn" type="button" class="btn btn-primary pull-right"><i class="icon-chevron-right icon-white"></i></button>
+        </section>
+    </div>
     
     <hr>
-    
     <footer>
         <p>&copy; Company 2012</p>
     </footer><!-- end of footer -->
