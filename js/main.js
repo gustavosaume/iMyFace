@@ -102,7 +102,7 @@ IMYFACE = {
                 }
                 var orig = $('#isOuttaMyFace-orig').val(), dest = $('#isOuttaMyFace-dest').val();
                 
-                if (!faces.getFace(orig) && !faces.getFace(dest))
+                if (!faces.getFace(orig) || !faces.getFace(dest))
                 {
                     $('#isOuttaMyFace-result').html('Please validate faces');
                     $('#isOuttaMyFace-time').html('');
@@ -123,7 +123,7 @@ IMYFACE = {
                 }
                 var orig = $('#inMyFacePaths-orig').val(), dest = $('#inMyFacePaths-dest').val();
                 
-                if (!faces.getFace(orig) && !faces.getFace(dest))
+                if (!faces.getFace(orig) || !faces.getFace(dest))
                 {
                     $('#inMyFacePaths-result').html('Please validate faces');
                     $('#inMyFacePaths-time').html('');
@@ -144,7 +144,7 @@ IMYFACE = {
                 }
                 var orig = $('#outtaMyFacePaths-orig').val(), dest = $('#outtaMyFacePaths-dest').val();
                 
-                if (!faces.getFace(orig) && !faces.getFace(dest))
+                if (!faces.getFace(orig) || !faces.getFace(dest))
                 {
                     $('#outtaMyFacePaths-result').html('Please validate faces');
                     $('#outtaMyFacePaths-time').html('');
@@ -166,7 +166,7 @@ IMYFACE = {
                 }
                 var orig = $('#minFaces-orig').val(), dest = $('#minFaces-dest').val();
                 
-                if (!faces.getFace(orig) && !faces.getFace(dest))
+                if (!faces.getFace(orig) || !faces.getFace(dest))
                 {
                     $('#minFaces-result').html('Please validate faces');
                     $('#minFaces-time').html('');
@@ -174,7 +174,7 @@ IMYFACE = {
                 }
                 var start = new Date().getTime();
                 
-                $('#minFaces-result').html(getMatrixShortestPath(orig, dest));
+                $('#minFaces-result').html(getShortestPathCount(orig, dest));
                 
                 $('#minFaces-time').html(new Date().getTime() - start + " milliseconds");
             });
@@ -462,7 +462,7 @@ var FacesData = function()
         return faces[id];
     }
     
-    var getPaths = function(nodeId, goalId, getAll, path, results)
+    var getPaths = function(nodeId, goalId, getAll, path, results, getMin)
     {
         // Append the current node to the traversed path
         var currentPath = path.slice();
@@ -471,7 +471,8 @@ var FacesData = function()
         // if we are at the goal, we add the path to the results
         if (nodeId == goalId)
         {
-            results.push(currentPath);
+            if (!getMin || (results[0] && results[0].length > current.length))
+                results.push(currentPath);
             return;
         }
         
@@ -598,9 +599,11 @@ var FacesMatrix = function()
         var indexOrig = getFace(orig).index;
         var indexDest = getFace(dest).index;
 
-        var length = connections.length, i, resultMatrix;
+        var length = connections.length, 
+            i,
+            resultMatrix = connections,
+            compareMatrix = connections;
 
-        resultMatrix = connections;
         // init matrix
         for (i=0; i<length; i++)
         {
@@ -609,7 +612,13 @@ var FacesMatrix = function()
             {
                 return i;
             }
+
+            if (compareMatrices(resultMatrix, compareMatrix))
+            {
+                return -1;
+            }
         }
+        console.log('MIN REPS: '+i);
         return -1;
     }
 
@@ -644,6 +653,11 @@ var FacesMatrix = function()
             result.push(column);
         }
         return result;
+    }
+
+    function compareMatrices(matrixA, matrixB)
+    {
+        return matrixA.join() == matrixB.join();
     }
 
     return {
@@ -683,6 +697,7 @@ function isAFace(id)
 function isInMyFace(myId, faceId)
 {
     var results = new Array();
+
     faces.getPaths(faceId, myId, false, [], results);
     
     return results.length > 0 ? true : false; 
@@ -698,7 +713,7 @@ function getInMyFacePaths(myId, faceId)
 
 function isOuttaMyFace(myId, faceId)
 {
-    var results = new Array();
+     var results = new Array();
     faces.getPaths(myId, faceId, false, [], results);
     
     return results.length > 0 ? true : false; 
@@ -714,7 +729,7 @@ function getOuttaMyFacePaths(myId, faceId)
 
 function getShortestPath(myId, faceId)
 {
-    var results = new Array();
+     var results = new Array();
     faces.getPaths(myId, faceId, true, [], results);
     
     var length = results.length;
