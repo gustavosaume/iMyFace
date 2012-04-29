@@ -178,7 +178,27 @@ IMYFACE = {
                 
                 $('#minFaces-time').html(new Date().getTime() - start + " milliseconds");
             });
-
+            $('#minFaces-matrix-btn').bind('click', function(){
+                if (!faces)
+                {
+                    $('#minFaces-result').html('No data loaded');
+                    $('#minFaces-time').html('');
+                    return
+                }
+                var orig = $('#minFaces-orig').val(), dest = $('#minFaces-dest').val();
+                
+                if (!faces.getFace(orig) || !faces.getFace(dest))
+                {
+                    $('#minFaces-result').html('Please validate faces');
+                    $('#minFaces-time').html('');
+                    return;
+                }
+                var start = new Date().getTime();
+                
+                $('#minFaces-result').html(getMatrixShortestPath(orig, dest));
+                
+                $('#minFaces-time').html(new Date().getTime() - start + " milliseconds");
+            });
         }
     }
 }
@@ -471,11 +491,18 @@ var FacesData = function()
         // if we are at the goal, we add the path to the results
         if (nodeId == goalId)
         {
-            if (!getMin || (results[0] && results[0].length > current.length))
+            if (!getMin || results.length == 0 || (results[0].length > currentPath.length))
                 results.push(currentPath);
             return;
         }
         
+        if (getMin && results.length > 0 && results[0].length > currentPath.length)
+        {
+            // if its the min path and the current path if bigget than a
+            // found path we can stop
+            return;
+        }
+
         var currentNode = getFace(nodeId);
         var childCount = currentNode.readers.length;
         var child, childId;
@@ -490,7 +517,7 @@ var FacesData = function()
             if (currentPath.indexOf(childId) == -1)
             {
                 // navigate through each child
-                getPaths(childId, goalId, getAll, currentPath, results);
+                getPaths(childId, goalId, getAll, currentPath, results, getMin);
                 
                 // if we only need to get one result (to see if they're connected)
                 // and already found one path we return
@@ -604,13 +631,17 @@ var FacesMatrix = function()
             resultMatrix = connections,
             compareMatrix = connections;
 
+        // validate if there directly connected
+        if (connections[indexOrig][indexDest] > 0)
+            return 0;
+
         // init matrix
         for (i=0; i<length; i++)
         {
             resultMatrix = multiplyMatrix(resultMatrix);
             if (resultMatrix[indexOrig][indexDest] > 0)
             {
-                return i;
+                return i+1;
             }
 
             if (compareMatrices(resultMatrix, compareMatrix))
@@ -698,7 +729,7 @@ function isInMyFace(myId, faceId)
 {
     var results = new Array();
 
-    faces.getPaths(faceId, myId, false, [], results);
+    faces.getPaths(faceId, myId, false, [], results, false);
     
     return results.length > 0 ? true : false; 
 }
@@ -706,7 +737,7 @@ function isInMyFace(myId, faceId)
 function getInMyFacePaths(myId, faceId)
 {
     var results = new Array();
-    faces.getPaths(faceId, myId, true, [], results);
+    faces.getPaths(faceId, myId, true, [], results, false);
     
     return results; 
 }
@@ -714,7 +745,7 @@ function getInMyFacePaths(myId, faceId)
 function isOuttaMyFace(myId, faceId)
 {
      var results = new Array();
-    faces.getPaths(myId, faceId, false, [], results);
+    faces.getPaths(myId, faceId, false, [], results, false);
     
     return results.length > 0 ? true : false; 
 }
@@ -722,7 +753,7 @@ function isOuttaMyFace(myId, faceId)
 function getOuttaMyFacePaths(myId, faceId)
 {
     var results = new Array();
-    faces.getPaths(myId, faceId, true, [], results);
+    faces.getPaths(myId, faceId, true, [], results, false);
     
     return results;
 }
@@ -730,7 +761,7 @@ function getOuttaMyFacePaths(myId, faceId)
 function getShortestPath(myId, faceId)
 {
      var results = new Array();
-    faces.getPaths(myId, faceId, true, [], results);
+    faces.getPaths(myId, faceId, true, [], results, true);
     
     var length = results.length;
     var shortestPathLength = Number.MAX_VALUE,
@@ -750,7 +781,7 @@ function getShortestPath(myId, faceId)
 
 function getShortestPathCount(myId, faceId)
 {
-    return getShortestPath(myId, faceId).length;
+    return getShortestPath(myId, faceId).length -1;
 }
 
 function getMatrixShortestPath(myId, faceId)
