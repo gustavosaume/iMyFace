@@ -199,6 +199,27 @@ IMYFACE = {
                 
                 $('#minFaces-time').html(new Date().getTime() - start + " milliseconds");
             });
+            $('#minFaces-bfs-btn').bind('click', function(){
+                if (!faces)
+                {
+                    $('#minFaces-result').html('No data loaded');
+                    $('#minFaces-time').html('');
+                    return
+                }
+                var orig = $('#minFaces-orig').val(), dest = $('#minFaces-dest').val();
+                
+                if (!faces.getFace(orig) || !faces.getFace(dest))
+                {
+                    $('#minFaces-result').html('Please validate faces');
+                    $('#minFaces-time').html('');
+                    return;
+                }
+                var start = new Date().getTime();
+                
+                $('#minFaces-result').html(getBFSShortestPath(orig, dest));
+                
+                $('#minFaces-time').html(new Date().getTime() - start + " milliseconds");
+            });
         }
     }
 }
@@ -542,13 +563,74 @@ var FacesData = function()
             }
         }
     }
+
+    var facesCount = function()
+    {
+        var count = 0;
+        for (var i in c) {
+           if (c.hasOwnProperty(i)) count++;
+        }
+        return count;
+    }
+
+    /*
+     * Go through the adding list and for each node that is not in the 
+     * already visited list we add it to the todo list
+     */
+    var getNextLevel = function(currentLevel, visited)
+    {
+        var current,
+            i,
+            j,
+            nextId,
+            todo = [],
+            length = currentLevel.length;
+
+        for (i=0; i < length; i++)
+        {
+            current = getFace(currentLevel[i]);
+            for (j=0; j < current.readers.length; j++)
+            {
+                nextId = current.readers[j];
+                if (visited.indexOf(nextId) == -1 && todo.indexOf(nextId) == -1)
+                {
+                    todo.push(nextId);
+                }
+            }
+        }
+        return todo;
+    }
+
+    var getMinPath = function(nodeId, goalId)
+    {
+        var todo = [nodeId],
+            visited = [],
+            level = 0;
+
+        // worst case when it is a linked list, so we iterate through the 
+        // nodesCount
+        while (todo.length > 0)
+        {
+            if (todo.indexOf(goalId) == -1)
+            {
+                level++;
+                visited = visited.concat(todo);
+                todo = getNextLevel(todo, visited);
+            }else{
+                return level;
+            }
+        }
+        return -1;
+    }
     
     return {loadFaces: loadFaces,
             loadConnections: loadConnections,
             loadPosts: loadPosts,
             getFace: getFace,
             getPaths: getPaths,
-            facesCount: facesCount};
+            facesCount: facesCount,
+            getMinPath: getMinPath,
+        };
 }
 
 var FacesMatrix = function()
@@ -801,6 +883,12 @@ function getShortestPathCount(myId, faceId)
 function getMatrixShortestPath(myId, faceId)
 {
     var minPath = facesMatrix.getMinPath(myId, faceId)
+    return minPath == -1 ? "No connection" : minPath + " x Faces";
+}
+
+function getBFSShortestPath(myId, faceId)
+{
+    var minPath = faces.getMinPath(myId, faceId)
     return minPath == -1 ? "No connection" : minPath + " x Faces";
 }
 

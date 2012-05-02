@@ -4072,7 +4072,8 @@ form {
   bottom: 0;
   right: 0;
 }
-.operations #minFaces-matrix-btn {
+.operations #minFaces-matrix-btn,
+.operations #minFaces-bfs-btn {
   right: 60px;
 }
 /* =============================================================================

@@ -24,7 +24,7 @@ Data Structure
 
 After running some tests (_check out the test page_) I decided to go with a hash implementation of a graph. That is a hash dict (or associative array to go with the js concepts) in which each key represented by the user id points to a Node that contains the user details and a list of its readers. This list contains the user id's of all of those who receive the post made by the node.
 
-One of the main advantages of this data structure is that it offers constant read times _in best case scenarios_ and allows to represent an adjacency matrix in an "optimized" way (by not wasting unnecesary space from not connected nodes as you would do with a matrix).
+One of the main advantages of this data structure is that it offers constant read times _in best case scenarios_ and allows to represent an adjacency matrix in an "optimized" way (by not wasting unnecessary space from not connected nodes as you would do with a matrix).
 
 Algorithms
 ==========
@@ -46,18 +46,22 @@ Min path
 
 ###Strike 1 (lazy approach)
 
-The previous algorithm was built so it could find all the paths between two nodes. So for the Large data set with cycles the browser memory kept groing taking almost all the Ram and increasing the page ins/outs. Also, after more than hour at 90% CPU use. all the priority was taken away by the scheduler given only about 3% to work with. So, I never got to see if it reach the goal.
+The previous algorithm was built so it could find all the paths between two nodes. So for the Large data set with cycles the browser memory kept growing taking almost all the Ram and increasing the page ins/outs. Also, after more than hour at 90% CPU use. all the priority was taken away by the scheduler given only about 3% to work with. So, I never got to see if it reach the goal.
 
 ###Strike 2
 
-Then, I tryed the Matrix multiplication that at some point looked better than the previous approach. This approach can be improved by using a language with matrix operation built-in or specialized hardware.
+Then, I tried the Matrix multiplication that at some point looked better than the previous approach. This approach can be improved by using a language with matrix operation built-in or specialized hardware.
 
 ###Foul Ball
 
-Ok, so I haven't found an acceptable aproach. So I went back to revise the graph algorithm. This time I focused on solving the memory issue and in this iteration every found path is compared agains the previous found path and only the shortest is kept.
+Ok, so I haven't found an acceptable approach. So I went back to revise the graph algorithm. This time I focused on solving the memory issue and in this iteration every found path is compared against the previous found path and only the shortest is kept.
 
 This time, the memory usage is mostly constant but it still took a considerable amount of time to solve the problem.
 
-### The Home Run (_tree triming_)
+### The Home Run (_tree trimming_) 
 
 This improvement was kind of obvious but never considered before. If the current path length if larger than the current result there is no path that can be shortest, so why keep going?
+
+After a thinking about this approach and taking in consideration what we talked in the last class about the differences in the Breadth First search and Deepth First search (my current aproach) I think that the DFS is whats causing the long times responses. This is because event though I'm doing the tree triming, the first element found is going to be deep down the graph, leaving a LOT of combinations to check above this level.
+
+So, I created a new BFS function only for the minPath search in which I look at the first level, and if in this level the goal in not found I get the next level, composed by all the children of the nodes in the current level (avoiding reapeted and already visitied nodes). This way the response is fast enough for not freezing the browser. The worst case for this approach is when the graph is equivalent to a linked list, for which all the nodes will have to be compared O(n)
