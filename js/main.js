@@ -421,7 +421,8 @@ var FacesData = function()
         for (i=0; i<length; i++)
         {
             faceData = (facesList[i]).split('|');
-            loadFace(faceData[0], faceData[1], faceData[2], faceData[3], i);
+            if (faceData.length === 4)
+                loadFace(faceData[0], faceData[1], faceData[2], faceData[3], i);
         }
     }
     
@@ -437,6 +438,15 @@ var FacesData = function()
         faces[id] = face;
     }
     
+    var facesCount = function()
+    {
+        var length = 0, key;
+        for (key in faces) {
+            if (faces.hasOwnProperty(key)) length++;
+        }
+        return length;
+    };
+
     var loadConnections = function (connectionsData)
     {
         var connections = connectionsData.split('\n');
@@ -485,25 +495,28 @@ var FacesData = function()
     var getPaths = function(nodeId, goalId, getAll, path, results, getMin)
     {
         // Append the current node to the traversed path
-        var currentPath = path.slice();
+        var currentPath = path.slice()
         currentPath.push(nodeId);
-        
+        var currentNode = getFace(nodeId);
+
         // if we are at the goal, we add the path to the results
-        if (nodeId == goalId)
+        // OR if the goal is within our readers (to avoid going deep unnecessarily)
+        if (nodeId == goalId || currentNode.readers.indexOf(goalId) > -1)
         {
+            // always add if we're not looking for the min path, if we are,
+            // we add if the new found path is shortest than the prev found path
             if (!getMin || results.length == 0 || (results[0].length > currentPath.length))
                 results.push(currentPath);
             return;
         }
         
-        if (getMin && results.length > 0 && results[0].length > currentPath.length)
+        if (getMin && results.length > 0 && results[0].length <= currentPath.length)
         {
-            // if its the min path and the current path if bigget than a
+            // if its the min path and the current path if bigger than a
             // found path we can stop
             return;
         }
 
-        var currentNode = getFace(nodeId);
         var childCount = currentNode.readers.length;
         var child, childId;
         // Go through all the children of the node
@@ -534,7 +547,8 @@ var FacesData = function()
             loadConnections: loadConnections,
             loadPosts: loadPosts,
             getFace: getFace,
-            getPaths: getPaths};
+            getPaths: getPaths,
+            facesCount: facesCount};
 }
 
 var FacesMatrix = function()
