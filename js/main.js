@@ -495,13 +495,13 @@ var FacesData = function()
     var getPaths = function(nodeId, goalId, getAll, path, results, getMin)
     {
         // Append the current node to the traversed path
-        var currentPath = path.slice()
+        var currentPath = path.slice();
         currentPath.push(nodeId);
         var currentNode = getFace(nodeId);
 
         // if we are at the goal, we add the path to the results
         // OR if the goal is within our readers (to avoid going deep unnecessarily)
-        if (nodeId == goalId || currentNode.readers.indexOf(goalId) > -1)
+        if (nodeId == goalId)
         {
             // always add if we're not looking for the min path, if we are,
             // we add if the new found path is shortest than the prev found path
